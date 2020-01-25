@@ -1,0 +1,53 @@
+If we need to use Lora for IOT(internet of things) we want to have an Lora gateway.
+but gateways are not so cheap they cost around 6000/- INR.
+So I used an NodeMcu which has an esp8266 wifi inbuilt so if i can able to establish the LORA connection between a UNO and NodeMcu 
+then the recievd packet(from UNO) will be able to sent from LORA to intenet using esp8266.
+So i used Nodemcu as my lora reciever.
+To learn about pins of nodemcu visit:-https:"//www.instructables.com/id/NodeMCU-ESP8266-Details-and-Pinout/".
+_____________________________________________
+pinno:  |    LORA             |  NODEMCU
+_____________________________________________
+1       |      GND             |       GND
+2       |   3.3V               | 3.3V Power in
+3       |   RESET              | D9
+4       |   DIO0               | D2
+5       |   SCK                | D13
+6       |   MISO               | D12
+7       |   MOSI               | D11
+8       |   NSS                | D10
+----------------------------------------------------------
+#RECIEVER_CODE:-
+///////////////////////////////////////////////////////////////////////////////////
+#include <ESP8266WiFi.h>
+#include <FirebaseArduino.h>
+#include <SPI.h>
+#include <LoRa.h>
+#define ss 15
+#define rst 16
+#define dio0 4
+void setup() {
+  Serial.begin(115200);   /
+ Serial.println("LoRa Receiver Callback");
+
+  LoRa.setPins(ss, rst, dio0);
+
+  if (!LoRa.begin(433E6)) {
+    Serial.println("Starting LoRa failed!");
+    while (1);
+  }
+}
+
+void loop() {
+  int packetSize = LoRa.parsePacket();
+  if (packetSize) {
+    // received a packet
+    Serial.print("Received packet '");
+    if (LoRa.available()) {
+     Serial.print((char)LoRa.read());
+    }
+  Serial.print("' with RSSI ");
+    Serial.println(LoRa.packetRssi());
+  
+  }
+}
+/////////////////////////////////////////////////////////////////////////////////
