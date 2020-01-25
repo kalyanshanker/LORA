@@ -1,0 +1,123 @@
+Pin description of LORA RA-02(Sx1278):-
+_____________________________________________
+pinno:  |    PIN               |  DESCRIPITON
+_____________________________________________
+1， 2   |      GND             |       GND
+3       |   3.3V               | 3.3V Power in
+4       |   RESET              | Reset
+5       |   DIO0               | Digital IO0 software setting
+6       |   DIO1               | Digital IO1, software setting
+7       |   DIO2               | Digital IO2, software setting
+8       |   DIO3               | Digital IO3, software setting
+9       |   GND                | GND 
+10      |   DIO4               | Digital IO4, software setting
+11      |   DIO5               | Digital IO5, software setting
+12      |   SCK                | SPI Clock input
+13      |   MISO               | SPI data output
+14      |   MOSI               | SPI data input
+15      |   NSS                | SPI Selected-IN
+16      |   GND                |  GND
+--------------------------------------------------
+ARDUNIO UNO WITH LORA :-
+This are the standard connections with UNO . If you want to change it you can do it by by using the Lora.Setpins(,,);
+
+_____________________________________________
+pinno:  |    LORA             |  UNO
+_____________________________________________
+1       |      GND             |       GND
+2       |   3.3V               | 3.3V Power in
+3       |   RESET              | D9
+4       |   DIO0               | D2
+5       |   SCK                | D13
+6       |   MISO               | D12
+7       |   MOSI               | D11
+8       |   NSS                | D10
+-----------------------------------------------------------
+
+IF you use above connections you can directly use the lora example skecth.
+To establish communication you can use the connections both and transmitter and reciever side..
+/////////////////////////////////////////////////////////////////////////////
+__________________________________________________________________________
+LORA TRANSMITTER:-
+_____________________________________________________________________________-
+#include <SPI.h>
+#include <LoRa.h>
+int counter = 0;
+void setup() {
+Serial.begin(9600);
+while (!Serial);
+Serial.println("LoRa Sender");
+if (!LoRa.begin(433E6)) { /////change it to your module freq in my case it is 433 so it is 433E6.
+Serial.println("Starting LoRa failed!");
+while (1);
+}
+void loop() {
+  Serial.print("Sending packet: ");
+  Serial.println(counter);
+// send packet
+  LoRa.beginPacket();
+  LoRa.print("heLORA");
+  LoRa.print(counter);
+  LoRa.print("-packet recieved");
+  LoRa.endPacket();
+counter++;
+delay(5000);
+}
+//////////////////////////////////////////////////////////////////
+--------------------------------------------------------------
+____________________________________________________________________________________________
+LORA RECIEVER:-
+/////////////////////////////////
+#include <SPI.h>
+#include <LoRa.h>
+
+void setup() {
+  Serial.begin(9600);
+  while (!Serial);
+
+  Serial.println("LoRa Receiver");
+
+  if (!LoRa.begin(433E6)) {
+    Serial.println("Starting LoRa failed!");
+    while (1);
+  }
+}
+
+void loop() {
+  // try to parse packet
+  int packetSize = LoRa.parsePacket();
+  if (packetSize) {
+    // received a packet
+    Serial.print("Received packet '");
+
+    // read packet
+    while (LoRa.available()) {
+      Serial.print((char)LoRa.read());
+    }
+
+    // print RSSI of packet
+    Serial.print("' with RSSI ");
+    Serial.println(LoRa.packetRssi());//rssi stands for recieved signal strength indicator.
+  }
+}
+///////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
