@@ -8,3 +8,4 @@ Since most of microcontrollers have only 1 set of these pins this makes us to us
 pin called (SS)Slave Select.
 When a device's Slave Select pin is low, it communicates with the master. When it's high, it ignores the master.
 This allows you to have multiple SPI devices sharing the same MISO, MOSI, and CLK lines.
+hhhhh
